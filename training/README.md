@@ -4,6 +4,7 @@ Code explanation:
 
 
 Current Models:
+```
 	Model0:
 		With a learning rate of 3, the loss continues decreasing. So feel free to continue training this model if you want to.
 		This model is learning slowly.
@@ -15,7 +16,8 @@ Current Models:
 		6. training_loss: 0.1379 
 		7. training_accuracy: 0.4289 
 		8. testing_accuracy: 0.3715
-	
+```
+```
 	Model1:
 		testing_accuracy stop growing while training loss keeps decreasing, this model probably overfits the data.
 		1. Hidden_Layers = 2
@@ -26,3 +28,4 @@ Current Models:
 		6. training_loss: 0.1290
 		7. training_accuracy: 0.4656
 		8. testing_accuracy: 0.3554
+```
