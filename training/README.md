@@ -31,7 +31,9 @@ Current Models:
 ```
 ```
 	Model2:
-		testing_accuracy stops growing where epochs is approximately 500 with a batch size of 32. Further testing may yield improved results. Hyperparameters for sgd -> sgd = keras.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+		testing_accuracy stops growing where epochs is approximately 500 with a batch 
+		size of 32. Further testing may yield improved results. Hyperparameters for
+		sgd -> sgd = keras.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 		1. Hidden_Layers = 2
 		2. Nodes_per_layers = 10
 		3. activation_func = ReLU (for hidden Layers)
