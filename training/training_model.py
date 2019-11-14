@@ -1,4 +1,4 @@
-from data_prep import *
+from get_data import *
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import SGD
