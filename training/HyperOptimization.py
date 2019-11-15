@@ -43,6 +43,7 @@ def pet_finder_model(x_train,y_train,x_test,y_test,params):
     out = model.fit(x_train, y_train, epochs=1, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc])
     return out, model
 
+losses = []
 scan_object = ta.Scan(x=x_train, y=y_train,params=parameters,model=pet_finder_model, experiment_name='pet_finder')
 # Evaluate
 analyze_object = ta.Analyze(scan_object)
