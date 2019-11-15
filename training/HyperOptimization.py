@@ -11,7 +11,7 @@ from keras.losses import mean_squared_error
 from keras.losses import categorical_crossentropy
 from keras.losses import poisson
 from keras.callbacks import LambdaCallback
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import astetik as ast
 import talos as ta
 
@@ -40,19 +40,26 @@ def pet_finder_model(x_train,y_train,x_test,y_test,params):
 
     # Train
     eval_acc = LambdaCallback(on_epoch_end=lambda batch, logs: print(model.evaluate(x_test, y_test)[1]))
-    out = model.fit(x_train, y_train, epochs=1, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc])
+    out = model.fit(x_train, y_train, epochs=1, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc],validation_data=[x_test, y_test])
     return out, model
 
-losses = []
+
 scan_object = ta.Scan(x=x_train, y=y_train,params=parameters,model=pet_finder_model, experiment_name='pet_finder')
 # Evaluate
 analyze_object = ta.Analyze(scan_object)
 scan_data = analyze_object.data
 
-#heat map
-ast.corr(scan_data)
+#
 
+# heatmap correlation
+analyze_object.plot_corr('val_accuracy', ['acc', 'loss', 'val_loss'])
 
+# a four dimensional bar grid
+analyze_object.plot_bars('lr', 'val_accuracy','num_Nodes','optimizer')
+
+#box plot
+analyze_object.plot_box('lr', 'val_accuracy','num_Nodes')
+plt.show()
 
 # Save the model
 #model.save('model2.h5')
