@@ -1,6 +1,7 @@
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
+from get_data import *
 def create_network(lr=0.0033,numNodes=12,loss='mean_squared_error'):
     model = Sequential()
     model.add(Dense(numNodes, input_dim=n, activation='sigmoid', kernel_initializer='random_uniform'))

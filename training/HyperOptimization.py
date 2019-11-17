@@ -17,7 +17,7 @@ import astetik as ast
 import talos as ta
 
 import os
-parameters = {'lr': [0.000001,0.00001,0.0001,0.00033,0.00066,0.001,0.0033,0.0066,0.01,0.033,0.066,0.1,0.3],
+parameters = {'lr': [0.000066,0.0001,0.00033,0.00066,0.001,0.0033,0.0066,0.01,0.033,0.066,0.1,0.33],
               'num_Nodes' : [6,9,12,15,18,21],
                 'loss_function':[mean_squared_error,categorical_crossentropy]
                 }
@@ -37,7 +37,7 @@ def pet_finder_model(x_train,y_train,x_test,y_test,params):
 
     # Train
     eval_acc = LambdaCallback(on_epoch_end=lambda batch, logs: print(model.evaluate(x_test, y_test)[1]))
-    out = model.fit(x_train, y_train, epochs=400, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc],validation_split=0.2)
+    out = model.fit(x_train, y_train, epochs=500, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc],validation_split=0.2)
     return out, model
 
 

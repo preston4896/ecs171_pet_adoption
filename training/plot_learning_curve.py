@@ -23,7 +23,9 @@ wrapper = KerasClassifier(build_fn=create_network, epochs=350,batch_size=32,verb
 #         sum = sum - temp
 #     return -sum
 #my_loss_function = make_scorer(CrossEntropy_Loss,greater_is_better=False)
-train_sizes,train_scores,test_scores = learning_curve(wrapper,x_train,y_train,cv=5,train_sizes=np.linspace(0.1,1.0,20,dtype=int))
+
+train_sizes,train_scores,test_scores \
+    = learning_curve(wrapper,x_train,y_train,cv=5,train_sizes=np.linspace(0.1,1.0,20))
 train_scores = 1-train_scores;
 test_scores = 1-test_scores;
 train_scores_mean = np.mean(train_scores,axis=1)
