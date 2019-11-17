@@ -37,7 +37,7 @@ def pet_finder_model(x_train,y_train,x_test,y_test,params):
 
     # Train
     eval_acc = LambdaCallback(on_epoch_end=lambda batch, logs: print(model.evaluate(x_test, y_test)[1]))
-    out = model.fit(x_train, y_train, epochs=500, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc],validation_split=0.2)
+    out = model.fit(x_train, y_train, epochs=10, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc],validation_split=0.2)
     return out, model
 
 
