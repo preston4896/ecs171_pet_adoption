@@ -3,7 +3,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import RFECV
 from sklearn.preprocessing import LabelEncoder
-
+import numpy as np
 from get_data import *
 
 df = pd.DataFrame(data)
@@ -30,7 +30,8 @@ print( 'Least Important features: ', df.columns[np.where(rfecv.support_ == False
 #Drop the least important features
 #This is the final data after RFECV.
 X.drop(X.columns[np.where(rfecv.support_ == False)[0]], axis=1, inplace=True)
-
+X['Adoption Speed'] = df['Adoption Speed']
+np.save("new_data_shuffled",X)
 
 # ===OPTIONAL MODEL FOR QUICK EVALUATION===
 

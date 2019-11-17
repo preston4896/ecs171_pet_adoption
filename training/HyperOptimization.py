@@ -37,7 +37,7 @@ def pet_finder_model(x_train,y_train,x_test,y_test,params):
 
     # Train
     eval_acc = LambdaCallback(on_epoch_end=lambda batch, logs: print(model.evaluate(x_test, y_test)[1]))
-    out = model.fit(x_train, y_train, epochs=10, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc],validation_split=0.2)
+    out = model.fit(x_train, y_train, epochs=400, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc],validation_split=0.2)
     return out, model
 
 
@@ -51,7 +51,7 @@ scan_data = analyze_object.data
 analyze_object.plot_corr('val_accuracy', ['acc', 'loss', 'val_loss'])
 
 # a four dimensional bar grid
-ast.bargrid(scan_data,x='lr', y='val_accuracy',hue='num_Nodes',col='loss_function')
+ast.bargrid(scan_data,x='lr', y='val_accuracy',hue='num_Nodes',row='loss_function')
 
 #regression
 analyze_object.plot_regs('loss', 'val_loss')
