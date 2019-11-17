@@ -19,7 +19,7 @@ import talos as ta
 import os
 parameters = {'lr': [0.000001,0.00001,0.0001,0.00033,0.00066,0.001,0.0033,0.0066,0.01,0.033,0.066,0.1,0.3],
               'num_Nodes' : [6,9,12,15,18,21],
-
+                'loss_function':[mean_squared_error,categorical_crossentropy]
                 }
 
 # Build an ANN
@@ -37,7 +37,7 @@ def pet_finder_model(x_train,y_train,x_test,y_test,params):
 
     # Train
     eval_acc = LambdaCallback(on_epoch_end=lambda batch, logs: print(model.evaluate(x_test, y_test)[1]))
-    out = model.fit(x_train, y_train, epochs=500, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc],validation_data=[x_test, y_test])
+    out = model.fit(x_train, y_train, epochs=500, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc],validation_split=0.2)
     return out, model
 
 
@@ -51,10 +51,7 @@ scan_data = analyze_object.data
 analyze_object.plot_corr('val_accuracy', ['acc', 'loss', 'val_loss'])
 
 # a four dimensional bar grid
-ast.bargrid(scan_data,x='lr', y='val_accuracy',hue='num_Nodes')
-
-#box plot
-analyze_object.plot_box('lr', 'val_accuracy','num_Nodes')
+ast.bargrid(scan_data,x='lr', y='val_accuracy',hue='num_Nodes',col='loss_function')
 
 #regression
 analyze_object.plot_regs('loss', 'val_loss')
