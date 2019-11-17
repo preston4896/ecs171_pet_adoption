@@ -30,7 +30,8 @@ print( 'Least Important features: ', df.columns[np.where(rfecv.support_ == False
 #Drop the least important features
 #This is the final data after RFECV.
 X.drop(X.columns[np.where(rfecv.support_ == False)[0]], axis=1, inplace=True)
-print(X.columns)
+
+
 # ===OPTIONAL MODEL FOR QUICK EVALUATION===
 
 # from keras.models import Sequential
