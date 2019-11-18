@@ -13,12 +13,13 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # a smaller value and continue learning.
 
 # Train
+
 model = create_network()
 eval_acc = LambdaCallback(on_epoch_end=lambda batch, logs: print(model.evaluate(x_test, y_test)[1]))
-model.fit(x_train, y_train, epochs=500, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc])
+model.fit(x_train, y_train, epochs=300, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc])
 
 # Evaluate
-wrapper = KerasClassifier(build_fn=create_network, epochs=500,batch_size=32,verbose=2)
+wrapper = KerasClassifier(build_fn=create_network, epochs=300,batch_size=32,verbose=2)
 val_scores = cross_val_score(wrapper, x_train, y_train, cv=5)
 print(model.evaluate(x_test, y_test)[1])
 print(np.mean(val_scores))

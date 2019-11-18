@@ -29,6 +29,7 @@ print("LOF:", sum(processedData2))
 newData = df.loc[processedData2 == 0]
 newData = newData.reset_index(drop=True)
 
+print(sum(newData['Adoption Speed'] == 0))
 
 
 

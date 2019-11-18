@@ -3,6 +3,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import RFECV
 from sklearn.preprocessing import LabelEncoder
+import matplotlib.pyplot as plt
 import numpy as np
 from get_data import *
 
@@ -12,7 +13,7 @@ df.columns = ['Type','Age','Breed1','Breed2','Gender','Color1','Color2','Color3'
               'Health','Quantity','Fee','State','Video Amount','Photo Amount',
               'Sentmt Magnitude','Sentmt Score','Adoption Speed']
 df['score*mag'] = df.apply(lambda row: (row['Sentmt Magnitude']*row['Sentmt Score']), axis=1)
-df['Dewormed & Vacciniated'] = df.apply(lambda row: (row['Dewormed']+row['Vaccinated']-row['Dewormed']*row['Vaccinated']), axis=1)
+df['Dewormed & Vacciniated'] = df.apply(lambda row: (row['Dewormed'] + row['Vaccinated'] - row['Dewormed']*row['Vaccinated']), axis=1)
 df = df.drop('Dewormed',axis=1)
 df = df.drop('Vaccinated',axis=1)
 X = df.drop('Adoption Speed', axis=1)

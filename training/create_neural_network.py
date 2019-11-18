@@ -1,11 +1,13 @@
 from keras.models import Sequential
 from keras.layers import Dense
+from keras.layers import Dropout
 from keras.optimizers import Adam
 from get_data import *
-def create_network(lr=0.0033,numNodes=12,loss='mean_squared_error'):
+def create_network(lr=0.0066,num_Nodes=18, dropout=0.3,final_activation='sigmoid', loss='categorical_crossentropy'):
     model = Sequential()
-    model.add(Dense(numNodes, input_dim=n, activation='sigmoid', kernel_initializer='random_uniform'))
-    model.add(Dense(numNodes, activation='sigmoid', kernel_initializer='random_uniform'))
-    model.add(Dense(5, activation='sigmoid', kernel_initializer='random_uniform'))
+    model.add(Dense(num_Nodes, input_dim=n, activation='sigmoid', kernel_initializer='random_uniform'))
+    model.add(Dropout(dropout))
+    model.add(Dense(num_Nodes, activation='sigmoid', kernel_initializer='random_uniform'))
+    model.add(Dense(5, activation=final_activation, kernel_initializer='random_uniform'))
     model.compile(optimizer=Adam(learning_rate=lr), loss=loss, metrics=['accuracy'])
     return model
