@@ -4,9 +4,6 @@ from keras.layers import Dense
 from keras.layers import Dropout
 from keras.optimizers import SGD
 from keras.optimizers import Adam
-from keras.activations import sigmoid
-from keras.activations import relu
-from keras.activations import softmax
 from keras.losses import mean_squared_error
 from keras.losses import categorical_crossentropy
 from keras.losses import poisson
@@ -17,9 +14,11 @@ import astetik as ast
 import talos as ta
 
 import os
-parameters = {'lr': [0.000066,0.0001,0.00033,0.00066,0.001,0.0033,0.0066,0.01,0.033,0.066,0.1,0.33],
-              'num_Nodes' : [6,9,12,15,18,21],
-                'loss_function':[mean_squared_error,categorical_crossentropy]
+parameters = {'lr': [0.0005,0.001,0.0033,0.0066,0.01,0.033,0.066,0.1],
+              'num_Nodes' : [6,9,12,15,18],
+              'dropout' : [0.3,0.6],
+              'loss_function':['mean_squared_error','categorical_crossentropy'],
+              'final_activation':['sigmoid', 'softmax'],
                 }
 
 # Build an ANN
@@ -29,15 +28,14 @@ parameters = {'lr': [0.000066,0.0001,0.00033,0.00066,0.001,0.0033,0.0066,0.01,0.
 def pet_finder_model(x_train,y_train,x_test,y_test,params):
     model = Sequential()
 
-    model.add(Dense(params['num_Nodes'], input_dim=n, activation='sigmoid', kernel_initializer='random_uniform'))
-
-    model.add(Dense(params['num_Nodes'], activation='sigmoid', kernel_initializer='random_uniform'))
-    model.add(Dense(5, activation='sigmoid', kernel_initializer='random_uniform',))
-    model.compile(optimizer=Adam(lr=params['lr'],decay=1e-8), loss='mean_squared_error', metrics=['accuracy'])
+    model.add(Dense(params['num_Nodes'], input_dim=n, activation=params['hidden_activation'], kernel_initializer='random_uniform'))
+    model.add(Dropout(params['dropout']))
+    model.add(Dense(params['num_Nodes'], activation=params['hidden_activation'], kernel_initializer='random_uniform'))
+    model.add(Dense(5, activation=params['final_activation'], kernel_initializer='random_uniform',))
+    model.compile(optimizer=Adam(lr=params['lr'],decay=1e-8), loss=params['loss_function'], metrics=['accuracy'])
 
     # Train
-    eval_acc = LambdaCallback(on_epoch_end=lambda batch, logs: print(model.evaluate(x_test, y_test)[1]))
-    out = model.fit(x_train, y_train, epochs=500, batch_size=32, verbose=2, class_weight=None, callbacks=[eval_acc],validation_split=0.2)
+    out = model.fit(x_train, y_train, epochs=400, batch_size=32, verbose=1, class_weight=None,validation_split=0.2)
     return out, model
 
 
@@ -51,7 +49,8 @@ scan_data = analyze_object.data
 analyze_object.plot_corr('val_accuracy', ['acc', 'loss', 'val_loss'])
 
 # a four dimensional bar grid
-ast.bargrid(scan_data,x='lr', y='val_accuracy',hue='num_Nodes',row='loss_function')
+ast.bargrid(scan_data,x='lr', y='val_accuracy',hue='num_Nodes',row='loss_function',col='dropout')
+ast.bargrid(scan_data,x='lr', y='val_accuracy',hue='num_Nodes',row='final_activation',col='dropout')
 
 #regression
 analyze_object.plot_regs('loss', 'val_loss')
