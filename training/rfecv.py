@@ -6,7 +6,7 @@ from sklearn.feature_selection import RFECV
 from sklearn.preprocessing import LabelEncoder
 import matplotlib.pyplot as plt
 import numpy as np
-from get_data import *
+from get_data_2 import *
 
 df = pd.DataFrame(data)
 df.columns = ['Type','Age','Breed1','Breed2','Gender','Color1','Color2','Color3',

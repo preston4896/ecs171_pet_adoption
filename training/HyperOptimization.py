@@ -1,4 +1,4 @@
-from get_data import *
+from get_data_2 import *
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout

@@ -22,15 +22,15 @@ test_scores = []
 eval_acc = LambdaCallback(on_epoch_end=lambda batch, logs: print(model.evaluate(x_test, y_test)[1]))
 train_loss = LambdaCallback(on_epoch_end=lambda batch, logs: train_scores.append(logs['loss']))
 test_loss = LambdaCallback(on_epoch_end=lambda batch, logs: test_scores.append(model.evaluate(x_test,y_test)[0]))
-#wrapper = KerasClassifier(build_fn=create_network, epochs=epochs,batch_size=32,verbose=2)
+wrapper = KerasClassifier(build_fn=create_network, epochs=epochs,batch_size=32,verbose=2)
 model.fit(x_train, y_train, epochs=epochs, batch_size=32, verbose=1, class_weight=None)
 # Evaluate
-#val_scores = cross_val_score(wrapper, x_train, y_train, cv=5)
+val_scores = cross_val_score(wrapper, x_train, y_train, cv=5)
 print("testing accuracy:",model.evaluate(x_test, y_test)[1])
-#print("cv accuracy:",np.mean(val_scores))
+print("cv accuracy:",np.mean(val_scores))
 
 # plot
-plt.title("Loss Curve")
+plt.title("Learning Curve")
 plt.grid()
 
 plt.fill_between(np.linspace(0,epochs,epochs), train_scores,

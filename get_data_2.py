@@ -10,7 +10,7 @@ def min_max_norm(x):
     return x
 
 
-data = np.load('data_shuffled.npy', allow_pickle=True)
+data = np.load('new_data_shuffled.npy', allow_pickle=True)
 data = np.asarray(data)
 
 # 66% training set; 33% testing set at first
