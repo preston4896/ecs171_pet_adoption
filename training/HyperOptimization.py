@@ -31,7 +31,7 @@ def pet_finder_model(x_train,y_train,x_test,y_test,params):
     model.add(Dense(params['num_Nodes'], input_dim=n, activation='sigmoid', kernel_initializer='random_uniform'))
     model.add(Dropout(params['dropout']))
     model.add(Dense(params['num_Nodes'], activation='sigmoid', kernel_initializer='random_uniform'))
-    model.add(Dense(5, activation=best_params['final_activation'], kernel_initializer='random_uniform',))
+    model.add(Dense(5, activation=params['final_activation'], kernel_initializer='random_uniform',))
     model.compile(optimizer=Adam(lr=params['lr'],decay=1e-8), loss=params['loss_function'], metrics=['accuracy'])
 
     # Train
@@ -39,7 +39,7 @@ def pet_finder_model(x_train,y_train,x_test,y_test,params):
     return out, model
 
 
-scan_object = ta.Scan(x=x_train, y=y_train,x_val=x_test,y_val=y_test,params=parameters,model=pet_finder_model, experiment_name='pet_finder')
+scan_object = ta.Scan(x=x_train, y=y_train,x_val=x_test,y_val=y_test, params=parameters,model=pet_finder_model, experiment_name='pet_finder')
 # Evaluate
 analyze_object = ta.Analyze(scan_object)
 scan_data = analyze_object.data
