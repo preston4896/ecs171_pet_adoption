@@ -14,10 +14,9 @@ df.columns = ['Type','Age','Breed1','Breed2','Gender','Color1','Color2','Color3'
               'Health','Quantity','Fee','State','Video Amount','Photo Amount',
               'Sentmt Magnitude','Sentmt Score','Adoption Speed']
 df['score*mag'] = df.apply(lambda row: (row['Sentmt Magnitude']*row['Sentmt Score']), axis=1)
-df['Sterilized & Dewormed & Vacciniated'] = df.apply(lambda row: (row['Sterilized']*row['Dewormed']*row['Vaccinated']), axis=1)
+df['Sterilized & Dewormed & Vacciniated'] = df.apply(lambda row: (row['Dewormed'] + row['Vaccinated'] - row['Dewormed']*row['Vaccinated']), axis=1)
 df = df.drop('Dewormed',axis=1)
 df = df.drop('Vaccinated',axis=1)
-df = df.drop('Sterilized',axis=1)
 X = df.drop('Adoption Speed', axis=1)
 target = df['Adoption Speed']
 
