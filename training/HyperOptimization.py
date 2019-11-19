@@ -13,10 +13,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import astetik as ast
 import talos as ta
-from talos.utils.gpu_utils import multi_gpu
-
+from talos.model import early_stopper
 import os
-parameters = {'lr': [0.0005,0.001,0.005,0.01,0.05],
+parameters = {'lr': [0.005,0.01,0.03,0.06,0.1,0.13],
               'num_Nodes' : [9,12,15,18,21],
               'dropout' : [1,0.1,0.2,0.3,0.4,0.5],
               'regularizer':[None,regularizers.l2(0.01)],
@@ -36,11 +35,12 @@ def pet_finder_model(x_train,y_train,x_test,y_test,params):
     model.add(Dense(params['num_Nodes'], activation='sigmoid', kernel_regularizer=params['regularizer'], kernel_initializer='random_uniform'))
     model.add(Dropout(params['dropout']))
     model.add(Dense(5, activation=params['final_activation'], kernel_regularizer=params['regularizer'], kernel_initializer='random_uniform',))
-    model = multi_gpu(model)
+
     model.compile(optimizer=Adam(lr=params['lr'],decay=1e-8), loss=params['loss_function'], metrics=['accuracy'])
 
     # Train
-    out = model.fit(x_train, y_train, epochs=300, batch_size=1024, verbose=1, class_weight='balanced',validation_data=[x_test,y_test])
+    out = model.fit(x_train, y_train, epochs=300, batch_size=32, verbose=1, class_weight=None,validation_data=[x_test,y_test],
+                    callbacks=[early_stopper(mode=[0,100]),early_stopper(monitor='val_accuracy',mode=[0,200])])
     return out, model
 
 

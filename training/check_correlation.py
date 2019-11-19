@@ -11,7 +11,7 @@ newData.columns = ['Type','Age','Breed1','Breed2','Gender','Color1','Color2','Co
               'Maturity Size','Fur Length','Vaccinated','Dewormed','Sterilized',
               'Health','Quantity','Fee','State','Video Amount','Photo Amount',
               'Sentmt Magnitude','Sentmt Score','Adoption Speed']
-ast.corr(newData)
+ast.corr(newData, corr_method='Pearson')
 
 plt.show()
 
