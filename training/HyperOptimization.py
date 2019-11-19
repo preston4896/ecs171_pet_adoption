@@ -4,6 +4,7 @@ from keras.layers import Dense
 from keras.layers import Dropout
 from keras.optimizers import SGD
 from keras.optimizers import Adam
+from keras import regularizers
 from keras.losses import mean_squared_error
 from keras.losses import categorical_crossentropy
 from keras.losses import poisson
@@ -12,11 +13,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import astetik as ast
 import talos as ta
+from talos.utils.gpu_utils import multi_gpu
 
 import os
-parameters = {'lr': [0.001,0.0033,0.0066,0.01,0.033],
+parameters = {'lr': [0.0005,0.001,0.005,0.01,0.05],
               'num_Nodes' : [9,12,15,18,21],
-              'dropout' : [0.1,0.2,0.3,0.4,0.5],
+              'dropout' : [1,0.1,0.2,0.3,0.4,0.5],
+              'regularizer':[None,regularizers.l2(0.01)],
               'loss_function':['mean_squared_error','categorical_crossentropy'],
               'final_activation':['sigmoid','softmax']
                 }
@@ -28,14 +31,16 @@ parameters = {'lr': [0.001,0.0033,0.0066,0.01,0.033],
 def pet_finder_model(x_train,y_train,x_test,y_test,params):
     model = Sequential()
 
-    model.add(Dense(params['num_Nodes'], input_dim=n, activation='sigmoid', kernel_initializer='random_uniform'))
+    model.add(Dense(params['num_Nodes'], input_dim=n, activation='sigmoid', kernel_regularizer=params['regularizer'], kernel_initializer='random_uniform'))
     model.add(Dropout(params['dropout']))
-    model.add(Dense(params['num_Nodes'], activation='sigmoid', kernel_initializer='random_uniform'))
-    model.add(Dense(5, activation=params['final_activation'], kernel_initializer='random_uniform',))
+    model.add(Dense(params['num_Nodes'], activation='sigmoid', kernel_regularizer=params['regularizer'], kernel_initializer='random_uniform'))
+    model.add(Dropout(params['dropout']))
+    model.add(Dense(5, activation=params['final_activation'], kernel_regularizer=params['regularizer'], kernel_initializer='random_uniform',))
+    model = multi_gpu(model)
     model.compile(optimizer=Adam(lr=params['lr'],decay=1e-8), loss=params['loss_function'], metrics=['accuracy'])
 
     # Train
-    out = model.fit(x_train, y_train, epochs=300, batch_size=32, verbose=1, class_weight='balanced',validation_data=[x_test,y_test])
+    out = model.fit(x_train, y_train, epochs=300, batch_size=1024, verbose=1, class_weight='balanced',validation_data=[x_test,y_test])
     return out, model
 
 
