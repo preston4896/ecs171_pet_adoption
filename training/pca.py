@@ -3,7 +3,8 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
-data = np.load('data_shuffled.npy', allow_pickle=True)
+from mpl_toolkits.mplot3d import Axes3D
+data = np.load('data_without_outliers.npy', allow_pickle=True)
 data = np.asarray(data)
 
 # Let n denote number of features
@@ -36,18 +37,18 @@ feature_names = np.array(['Type',                 #0
                            dtype=str)
 
 
-feats = np.array([1, 2, 3, 20], dtype=int)
+feats = np.array([1, 2, 3, 19, 20], dtype=int)
 mask = np.zeros((1, n+1), dtype='bool')[0]
-mask[:] = 1
+mask[feats] = 1
 
 
 # Remove the label
-x = data[:, mask]
+x = data[:, :-1]
 
 
 # PCA
 x = StandardScaler().fit_transform(x)
-pca = PCA(n_components=2)
+pca = PCA(n_components=3)
 PC = pca.fit_transform(x)
 
 
@@ -71,7 +72,7 @@ plt.plot(cate_4[:, 0], cate_4[:, 1], 'y.', markersize=marker_size)
 
 
 # Give labels and legends
-plt.title('PCA with all features')
+plt.title('2D plot of PCA with all features')
 black = mpatches.Patch(color='black', label='category 0')
 red = mpatches.Patch(color='red', label='category 1')
 blue = mpatches.Patch(color='blue', label='category 2')
@@ -81,4 +82,43 @@ plt.legend(handles=[black, red, blue, green, yellow])
 plt.xlabel('PC1')
 plt.ylabel('PC2')
 plt.show()
+
+
+# 3d Plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+mks = 0.50
+plt.title('3D plot of PCA with all features')
+ax.scatter(cate_0[:, 0], cate_0[:, 1], cate_0[:, 2], c='k', s=mks, marker='o')
+ax.scatter(cate_1[:, 0], cate_1[:, 1], cate_1[:, 2], c='r', s=mks, marker='o')
+ax.scatter(cate_2[:, 0], cate_2[:, 1], cate_2[:, 2], c='b', s=mks, marker='o')
+ax.scatter(cate_3[:, 0], cate_3[:, 1], cate_3[:, 2], c='g', s=mks, marker='o')
+ax.scatter(cate_4[:, 0], cate_4[:, 1], cate_4[:, 2], c='y', s=mks, marker='o')
+black = mpatches.Patch(color='black', label='category 0')
+red = mpatches.Patch(color='red', label='category 1')
+blue = mpatches.Patch(color='blue', label='category 2')
+green = mpatches.Patch(color='green', label='category 3')
+yellow = mpatches.Patch(color='yellow', label='category 4')
+plt.legend(handles=[black, red, blue, green, yellow])
+ax.set_xlabel('PC1')
+ax.set_ylabel('PC2')
+ax.set_zlabel('PC3')
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
