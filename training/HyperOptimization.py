@@ -14,11 +14,11 @@ import astetik as ast
 import talos as ta
 
 import os
-parameters = {'lr': [0.0005,0.001,0.0033,0.0066,0.01,0.033,0.066,0.1],
-              'num_Nodes' : [6,9,12,15,18,21],
-              'dropout' : [0.3,0.6,1],
+parameters = {'lr': [0.001,0.0033,0.0066,0.01,0.033],
+              'num_Nodes' : [9,12,15,18,21],
+              'dropout' : [0.1,0.2,0.3,0.4,0.5],
               'loss_function':['mean_squared_error','categorical_crossentropy'],
-              'final_activation':['sigmoid', 'softmax'],
+              'final_activation':['sigmoid','softmax']
                 }
 
 # Build an ANN
@@ -31,15 +31,15 @@ def pet_finder_model(x_train,y_train,x_test,y_test,params):
     model.add(Dense(params['num_Nodes'], input_dim=n, activation='sigmoid', kernel_initializer='random_uniform'))
     model.add(Dropout(params['dropout']))
     model.add(Dense(params['num_Nodes'], activation='sigmoid', kernel_initializer='random_uniform'))
-    model.add(Dense(5, activation=params['final_activation'], kernel_initializer='random_uniform',))
+    model.add(Dense(5, activation=best_params['final_activation'], kernel_initializer='random_uniform',))
     model.compile(optimizer=Adam(lr=params['lr'],decay=1e-8), loss=params['loss_function'], metrics=['accuracy'])
 
     # Train
-    out = model.fit(x_train, y_train, epochs=400, batch_size=32, verbose=1, class_weight=None,validation_split=0.2)
+    out = model.fit(x_train, y_train, epochs=300, batch_size=32, verbose=1, class_weight='balanced',validation_data=[x_test,y_test])
     return out, model
 
 
-scan_object = ta.Scan(x=x_train, y=y_train,params=parameters,model=pet_finder_model, experiment_name='pet_finder')
+scan_object = ta.Scan(x=x_train, y=y_train,x_val=x_test,y_val=y_test,params=parameters,model=pet_finder_model, experiment_name='pet_finder')
 # Evaluate
 analyze_object = ta.Analyze(scan_object)
 scan_data = analyze_object.data

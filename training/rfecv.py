@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import RFECV
 from sklearn.preprocessing import LabelEncoder
@@ -13,9 +14,10 @@ df.columns = ['Type','Age','Breed1','Breed2','Gender','Color1','Color2','Color3'
               'Health','Quantity','Fee','State','Video Amount','Photo Amount',
               'Sentmt Magnitude','Sentmt Score','Adoption Speed']
 df['score*mag'] = df.apply(lambda row: (row['Sentmt Magnitude']*row['Sentmt Score']), axis=1)
-df['Dewormed & Vacciniated'] = df.apply(lambda row: (row['Dewormed'] + row['Vaccinated'] - row['Dewormed']*row['Vaccinated']), axis=1)
+df['Sterilized & Dewormed & Vacciniated'] = df.apply(lambda row: (row['Sterilized']*row['Dewormed']*row['Vaccinated']), axis=1)
 df = df.drop('Dewormed',axis=1)
 df = df.drop('Vaccinated',axis=1)
+df = df.drop('Sterilized',axis=1)
 X = df.drop('Adoption Speed', axis=1)
 target = df['Adoption Speed']
 
@@ -23,8 +25,8 @@ label_encoder = LabelEncoder()
 target = label_encoder.fit_transform(target)
 
 #RFECV
-rfc = RandomForestClassifier(random_state=101, n_estimators=10)
-rfecv = RFECV(estimator=rfc, step=1, cv=StratifiedKFold(10),  scoring='accuracy', verbose=1)
+rfc = RandomForestClassifier(n_estimators=100,n_jobs=-1,oob_score=True,max_features='auto',min_samples_leaf=50)
+rfecv = RFECV(estimator=rfc, step=1, cv=3,  scoring='accuracy', verbose=1)
 rfecv.fit(X, target)
 
 print('Optimal number of features: {}'.format(rfecv.n_features_))

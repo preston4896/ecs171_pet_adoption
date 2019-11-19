@@ -14,16 +14,6 @@ from create_neural_network import create_network
 plt.figure()
 plt.title("Learning Curve")
 wrapper = KerasClassifier(build_fn=create_network, epochs=350,batch_size=32,verbose=2)
-
-# def CrossEntropy_Loss(ground_truth, predictions):
-#     sum = 0
-#     for i in range(0,len(ground_truth)):
-#         for j in range(0, 5)
-#             temp = temp + ground_truth[j] * np.log(predictions[j])
-#         sum = sum - temp
-#     return -sum
-#my_loss_function = make_scorer(CrossEntropy_Loss,greater_is_better=False)
-
 train_sizes,train_scores,test_scores \
     = learning_curve(wrapper,x_train,y_train,cv=5,train_sizes=np.linspace(0.1,1.0,20))
 train_scores = 1-train_scores;

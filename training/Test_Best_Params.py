@@ -4,7 +4,7 @@ from create_neural_network import create_network
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import cross_val_score
 from get_data import *
-best_params = np.load("best parameters.npy",allow_pickle=True)
+best_params = np.load("round 1 best parameters.npy",allow_pickle=True)
 best_params = pd.DataFrame(best_params)
 best_params.columns = ['loss','final_activation','dropout','num_Nodes','epochs','lr','index']
 
