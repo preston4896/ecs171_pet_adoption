@@ -12,7 +12,7 @@ newData.columns = ['Type','Age','Breed1','Breed2','Gender','Color1','Color2','Co
               'Health','Quantity','Fee','State','Video Amount','Photo Amount',
               'Sentmt Magnitude','Sentmt Score','Adoption Speed']
 
-ast.corr(newData, corr_method='pearson')
+ast.corr(newData, corr_method='pearson', title="Correlation Heatmap of All Features")
 
 
 plt.show()
