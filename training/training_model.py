@@ -1,4 +1,4 @@
-from get_data import *
+from get_data_2 import *
 import numpy as np
 from keras.callbacks import LambdaCallback
 from keras.wrappers.scikit_learn import KerasClassifier
@@ -16,14 +16,14 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # Train
 
 model = create_network()
-epochs = 500
+epochs = 400
 train_scores = []
 test_scores = []
 eval_acc = LambdaCallback(on_epoch_end=lambda batch, logs: print(model.evaluate(x_test, y_test)[1]))
 train_loss = LambdaCallback(on_epoch_end=lambda batch, logs: train_scores.append(logs['loss']))
-test_loss = LambdaCallback(on_epoch_end=lambda batch, logs: test_scores.append(model.evaluate(x_test,y_test)[0]))
+test_loss = LambdaCallback(on_epoch_end=lambda batch, logs: test_scores.append(logs['val_loss']))
 wrapper = KerasClassifier(build_fn=create_network, epochs=epochs,batch_size=32,verbose=2)
-model.fit(x_train, y_train, epochs=epochs, batch_size=32, verbose=1, class_weight=None)
+model.fit(x_train, y_train, validation_split=0.2, epochs=epochs, batch_size=32, verbose=1, class_weight=None, callbacks=[train_loss,test_loss])
 # Evaluate
 val_scores = cross_val_score(wrapper, x_train, y_train, cv=5)
 print("testing accuracy:",model.evaluate(x_test, y_test)[1])

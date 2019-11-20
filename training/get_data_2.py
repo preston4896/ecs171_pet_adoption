@@ -13,9 +13,9 @@ def min_max_norm(x):
 data = np.load('new_data_shuffled.npy', allow_pickle=True)
 data = np.asarray(data)
 
-# 66% training set; 33% testing set at first
+# 80% training, 20% testing
 # print(data)
-train_size = int(0.66*len(data))
+train_size = int(0.8*len(data))
 
 
 # Let n denote number of features
