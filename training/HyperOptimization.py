@@ -35,10 +35,14 @@ def pet_finder_model(x_train,y_train,x_test,y_test,params):
     model.add(Dense(params['num_Nodes'], activation='sigmoid', kernel_regularizer=params['regularizer'], kernel_initializer='random_uniform'))
     model.add(Dropout(params['dropout']))
     model.add(Dense(5, activation=params['final_activation'], kernel_regularizer=params['regularizer'], kernel_initializer='random_uniform',))
+
+
     model.compile(optimizer=Adam(lr=params['lr'],decay=1e-8), loss=params['loss_function'], metrics=['accuracy'])
 
     # Train
-    out = model.fit(x_train, y_train, epochs=2000, batch_size=11135, verbose=1, class_weight='balanced',validation_data=[x_test,y_test], callbacks=[early_stopper(mode=[0,100]),early_stopper(monitor='val_accuracy',mode=[0,250])])
+    out = model.fit(x_train, y_train, epochs=300, batch_size=32, verbose=1, class_weight=None,validation_data=[x_test,y_test],
+                    callbacks=[early_stopper(mode=[0,100]),early_stopper(monitor='val_accuracy',mode=[0,200])])
+
     return out, model
 
 

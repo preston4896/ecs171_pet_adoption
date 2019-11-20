@@ -1,0 +1,2 @@
+round_epochs,val_loss,val_accuracy,loss,accuracy,dropout,final_activation,loss_function,lr,num_Nodes,regularizer
+34,0.15246754593547734,0.2693965435028076,0.15171876329983838,0.2741805,1,sigmoid,mean_squared_error,0.0005,9,None
