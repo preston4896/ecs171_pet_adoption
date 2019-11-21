@@ -1,21 +1,25 @@
-from get_data_2 import *
+from training.get_data_2 import *
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout
 from keras.optimizers import Adam
-from keras import regularizers
+from training.create_neural_network import create_network
 import matplotlib.pyplot as plt
 import numpy as np
 import astetik as ast
 import talos as ta
+from keras.wrappers.scikit_learn import KerasClassifier
+from keras.callbacks import EarlyStopping
+from sklearn.model_selection import cross_val_score
 from talos.model.early_stopper import early_stopper
-
-parameters = {'lr': [0.005,0.01,0.03,0.06,0.1,0.13],
+from keras.callbacks import  LambdaCallback
+parameters = {'lr': [0.001,0.0033,0.0066,0.01,0.03],
               'num_Nodes' : [9,12,15,18,21],
-              'dropout' : [1,0.1,0.2,0.3,0.4,0.5],
-              'loss_function':['mean_squared_error','categorical_crossentropy','poisson'],
-              'final_activation':['sigmoid','softmax']
+              'dropout' : [0.1,0.2,0.3,0.4,0.5],
+              'loss_function':['categorical_crossentropy','poisson'],
+              'final_activation':['sigmoid']
                 }
+epochs = 500
 
 # Build an ANN
 # The initial learning rate is quite large, when the loss starts oscillating
@@ -31,43 +35,101 @@ def pet_finder_model(x_train,y_train,x_test,y_test,params):
     model.add(Dense(5, activation=params['final_activation'], kernel_initializer='random_uniform',))
 
 
-    model.compile(optimizer=Adam(lr=params['lr'],decay=1e-8), loss=params['loss_function'], metrics=['accuracy'])
+    model.compile(optimizer=Adam(lr=params['lr'],beta_1=0.9,beta_2=0.999,epsilon=1e-8), loss=params['loss_function'], metrics=['accuracy'])
 
     # Train
-    out = model.fit(x_train, y_train, epochs=300, batch_size=32, verbose=1, class_weight=None,validation_split=0.2,
-                    callbacks=[early_stopper(mode=[0,100]),early_stopper(monitor='val_accuracy',mode=[0,200])])
+    out = model.fit(x=x_train, y=y_train, epochs=epochs, batch_size=32, verbose=1, class_weight='Balanced', validation_split=0.2,
+                    callbacks=[early_stopper(epochs=1000,monitor='val_loss',mode='moderate'),early_stopper(epochs=1000, monitor='val_accuracy',mode='moderate')])
 
     return out, model
 
 
-scan_object = ta.Scan(x=x_train, y=y_train, params=parameters,model=pet_finder_model, experiment_name='pet_finder')
+scan_object = ta.Scan(x=x_train, y=y_train, params=parameters,model=pet_finder_model,val_split=0, experiment_name='pet_finder')
 # Evaluate
 analyze_object = ta.Analyze(scan_object)
 scan_data = analyze_object.data
 
-
 # heatmap correlation
-analyze_object.plot_corr('val_accuracy', ['acc', 'loss', 'val_loss'])
+analyze_object.plot_corr('val_accuracy', ['accuracy', 'loss', 'val_loss'])
 
 # a four dimensional bar grid
 ast.bargrid(scan_data,x='lr', y='val_accuracy',hue='num_Nodes',row='loss_function',col='dropout')
 ast.bargrid(scan_data,x='lr', y='val_accuracy',hue='num_Nodes',row='final_activation',col='dropout')
 
-#regression
-analyze_object.plot_regs('loss', 'val_loss')
-analyze_object.plot_regs('lr', 'loss')
+# wrapper = KerasClassifier(build_fn=create_network, epochs=epochs)
+# scorer = make_scorer(f1_score, average= 'weighted')
+# grid = GridSearchCV(estimator=wrapper,param_grid=parameters,scoring=scorer,iid=False,cv=5,return_train_score=True,verbose=1)
+# grid_result = grid.fit(x_train,labels_train)
 
-best_params = analyze_object.best_params('val_accuracy', ['accuracy', 'loss', 'val_loss'])
 
-np.save("best parameters",best_params)
-np.save("scan_results",scan_data)
+best_parameters = analyze_object.table('val_loss',['accuracy', 'loss', 'val_loss'],'val_accuracy')
+# val_scores = []
+# epochs = 1000
+# for i in range(0, 10):
+#     def build_fn(lr=best_parameters['lr'][i],num_Nodes=best_parameters['num_Nodes'][i],
+#                               dropout=best_parameters['dropout'][i],final_activation=best_parameters['final_activation'][i],
+#                               loss_function=best_parameters['loss_function'][i]):
+#         model = Sequential()
+#         model.add(Dense(num_Nodes, input_dim=n, activation='sigmoid', kernel_initializer='random_uniform'))
+#         model.add(Dropout(dropout))
+#         model.add(Dense(num_Nodes, activation='sigmoid', kernel_initializer='random_uniform'))
+#         model.add(Dropout(dropout))
+#         model.add(Dense(5, activation=final_activation, kernel_initializer='random_uniform'))
+#         model.compile(optimizer=Adam(lr=lr, beta_1=0.9, beta_2=0.999, epsilon=1e-8), loss=loss_function,
+#                       metrics=['accuracy'])
+#         return model
+#     wrapper = KerasClassifier(build_fn=create_network, epochs=epochs)
+#     temp = cross_val_score(wrapper, x_train, y_train, cv=5, verbose=1, fit_params={'class_weight' : ['Balanced']})
+#     val_scores.append(np.mean(temp))
+#     best_parameter_index = np.argmax(val_scores)
+best_parameters = best_parameters.iloc[[0]]
+def build_fn(lr=best_parameters['lr'].iloc[0],num_Nodes=best_parameters['num_Nodes'].iloc[0],
+                             dropout=best_parameters['dropout'].iloc[0],final_activation=best_parameters['final_activation'].iloc[0],
+                             loss_function=best_parameters['loss_function'].iloc[0]):
+        model = Sequential()
+        model.add(Dense(num_Nodes, input_dim=n, activation='sigmoid', kernel_initializer='random_uniform'))
+        model.add(Dropout(dropout))
+        model.add(Dense(num_Nodes, activation='sigmoid', kernel_initializer='random_uniform'))
+        model.add(Dropout(dropout))
+        model.add(Dense(5, activation=final_activation, kernel_initializer='random_uniform'))
+        model.compile(optimizer=Adam(lr=lr, beta_1=0.9, beta_2=0.999, epsilon=1e-8), loss=loss_function,
+                      metrics=['accuracy'])
+        return model
+wrapper = KerasClassifier(build_fn=build_fn, epochs=epochs)
+temp = cross_val_score(wrapper, x_train, y_train, cv=5, verbose=1, fit_params={'class_weight' : ['Balanced']})
+cv_acc = np.mean(temp)
+final_model = build_fn()
+train_scores = []
+val_scores = []
+train_loss = LambdaCallback(on_epoch_end=lambda batch, logs: train_scores.append(logs['loss']))
+val_loss = LambdaCallback(on_epoch_end=lambda batch, logs: val_scores.append(logs['val_loss']))
+earlystopper = EarlyStopping(monitor='val_loss', patience=epochs/10)
+final_model.fit(x_train,y_train,epochs=epochs, validation_split=0.2, batch_size=32, verbose=1, class_weight='Balanced',
+                callbacks=[train_loss, val_loss])
+#retrain for all training data
+test_scores = []
+test_loss = LambdaCallback(on_epoch_end=lambda batch, logs: test_scores.append(final_model.evaluate(x_test, y_test)[0]))
+final_model.fit(x_train, y_train, epochs=epochs, batch_size=32, verbose=0,class_weight='Balanced',callbacks=[test_loss])
+print("testing accuracy:",final_model.evaluate(x_test, y_test)[1])
+print("cross validation accuracy:", cv_acc)
 
-print(scan_data)
-print(best_params)
+#Plot Learning Curve
+plt.figure()
+plt.title("Learning Curve")
+plt.grid()
 
+plt.fill_between(np.linspace(0,len(train_scores),len(train_scores)), train_scores,
+                  alpha=0.1, color="r")
+plt.fill_between(np.linspace(0,len(test_scores),len(test_scores)), test_scores,
+             alpha=0.1, color="g")
+plt.ylabel("loss")
+plt.xlabel("epochs")
+plt.ylim(top=max(train_scores),bottom=min(train_scores))
+plt.plot(np.linspace(0,len(train_scores),len(train_scores)), train_scores, 'o-', color="r",
+         label="Training score")
+plt.plot(np.linspace(0,len(test_scores),len(test_scores)), test_scores, 'o-', color="g",
+          label="validation score")
+legend = plt.legend(loc='upper right', shadow=True, fontsize='medium')
+legend.get_frame().set_facecolor('C0')
 
 plt.show()
-
-
-# Save the model
-#model.save('model2.h5')
