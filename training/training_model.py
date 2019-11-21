@@ -22,6 +22,7 @@ train_scores = []
 test_scores = []
 train_loss = LambdaCallback(on_epoch_end=lambda batch, logs: train_scores.append(logs['loss']))
 test_loss = LambdaCallback(on_epoch_end=lambda batch, logs: test_scores.append(logs['val_loss']))
+
 wrapper = KerasClassifier(build_fn=create_network, epochs=epochs,batch_size=32,verbose=0)
 earlystopper = EarlyStopping(monitor='val_loss', patience=epochs/10)
 model.fit(x_train, y_train, validation_split=0.2, epochs=epochs, batch_size=32, verbose=1,
@@ -31,8 +32,9 @@ val_scores = cross_val_score(wrapper, x_train, y_train, cv=5, verbose=0, n_jobs=
                              fit_params={"callbacks":[EarlyStopping(monitor='loss', patience=epochs/10)]})
 model.fit(x_train, y_train, epochs=epochs, batch_size=32, verbose=0,
           class_weight='Balanced', callbacks=[EarlyStopping(monitor='loss', patience=epochs/10)])
+
 print("testing accuracy:",model.evaluate(x_test, y_test)[1])
-print("cv accuracy:",np.mean(val_scores))
+#print("cv accuracy:",np.mean(val_scores))
 
 # plot
 plt.title("Learning Curve")
