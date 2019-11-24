@@ -97,7 +97,7 @@ final_model.fit(x_train, y_train, epochs=epochs, validation_split=0.2, batch_siz
 
 # retrain for all training data
 test_scores = []
-final_model = create_network()  # build_fn()
+final_model = build_fn()
 test_loss = LambdaCallback(on_epoch_end=lambda batch, logs: test_scores.append(final_model.evaluate(x_test, y_test)[0]))
 final_model.fit(x_train, y_train, epochs=epochs, batch_size=32, verbose=0, class_weight='Balanced',
                 callbacks=[test_loss])
