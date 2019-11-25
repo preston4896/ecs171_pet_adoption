@@ -14,6 +14,13 @@ from talos.model.early_stopper import early_stopper
 from keras.callbacks import LambdaCallback
 from create_neural_network import create_network
 
+# This script runs the grid search and plot the necessary graphs. It saves the best parameter output by the grid search. If you think it is
+# a better set of hyperparameters than the ones in create_neural_network, put those as the default parameters of create_network. This script
+# does not automatically do that because users have to analyze the learning curve and then make a judgement.
+
+
+
+# This is the set of search space for grid search
 parameters = {'lr': [0.001,0.0033,0.0066,0.01,0.015],
               'num_Nodes': [9,12,15,18,21],
               'dropout': [0.1,0.2,0.3,0.4,0.5],
@@ -23,10 +30,7 @@ parameters = {'lr': [0.001,0.0033,0.0066,0.01,0.015],
 epochs = 1000
 
 
-# Build an ANN
-# The initial learning rate is quite large, when the loss starts oscillating
-# I will save the model and run refine_model.py but set the learning rate to
-# a smaller value and continue learning.
+# model builder for Talos scan function
 def pet_finder_model(x_train, y_train, x_test, y_test, params):
     model = Sequential()
 
@@ -47,7 +51,7 @@ def pet_finder_model(x_train, y_train, x_test, y_test, params):
 
     return out, model
 
-
+# Running Talos scan. plot correlation heatmap and bar plot. Return the list of parameters in descending order based on validation accuracy
 def Optimization():
     scan_object = ta.Scan(x=x_train, y=y_train, params=parameters, model=pet_finder_model, val_split=0,
                           experiment_name='pet_finder')
@@ -67,7 +71,7 @@ def Optimization():
 best_parameters = Optimization()
 best_parameters = best_parameters.iloc[[0]]
 
-
+# Build the new model based on the best parameters
 def build_fn(lr=best_parameters['lr'].iloc[0], num_Nodes=best_parameters['num_Nodes'].iloc[0],
              dropout=best_parameters['dropout'].iloc[0], final_activation=best_parameters['final_activation'].iloc[0],
              loss_function=best_parameters['loss_function'].iloc[0]):
@@ -104,7 +108,7 @@ final_model.fit(x_train, y_train, epochs=epochs, batch_size=32, verbose=0, class
 print("testing accuracy:", final_model.evaluate(x_test, y_test)[1])
 print("cross validation accuracy:", cv_acc)
 print("best parameters:", best_parameters)
-
+pd.to_pickle(best_parameters,'best_parameters_output_by_HyperOptimization') # Saves the best hyperparameters as a pandas dataframe file.
 # Plot Learning Curve
 plt.figure()
 plt.title("Learning Curve")
