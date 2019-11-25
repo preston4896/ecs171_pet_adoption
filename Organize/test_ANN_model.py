@@ -10,10 +10,8 @@ from create_neural_network import create_network
 
 epochs = 1000
 
-# Build an ANN
-# The initial learning rate is quite large, when the loss starts oscillating
-# I will save the model and run refine_model.py but set the learning rate to
-# a smaller value and continue learning.
+# Build an ANN wtih create_neural_network, which uses the best hyperparameters. This scripts prints
+# the 5-fold cross validation accuracy, testing accuracy and plot the learning curve.
 
 
 wrapper = KerasClassifier(build_fn=create_network, epochs=epochs)
