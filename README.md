@@ -1,4 +1,4 @@
-# ECS 171 - Predicting Per Adoption Speed
+# ECS 171 - Predicting Adoption Speed
 
 Group project for F19 ECS171 by: Amitpal Gill, April Vang, Brian Cirieco, Gan Qiu, Guanzi Yao, Pavlos Maltsev, Preston Ong, Stephanie Olivera, Xuan Deng, Zoe Kanavas
 
