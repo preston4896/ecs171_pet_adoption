@@ -3,7 +3,8 @@ from keras.layers import Dense
 from keras.layers import Dropout
 from keras.optimizers import Adam
 
-
+# This function creates the ANN with the best hyperparameters. To try other hyperparameters, please put those as the default parameters so
+# the wrapper can work without a problem.
 # Hpyerparameter Optimization:
 # round 1: lr=0.0033,num_Nodes=12,dropout=1,loss='mean_Squared_error'
 # round 2: lr=0.0066,num_Nodes=18, dropout=0.3,final_activation='sigmoid', loss='categorical_crossentropy'
