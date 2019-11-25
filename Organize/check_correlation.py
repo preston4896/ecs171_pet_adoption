@@ -4,6 +4,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import chi2_contingency
 
+# This script plots the correlation heatmap of the raw data. It uses Chi-Squared Independence Test to confirm such correlation between
+# categorical data.
 def check_correlation(newData):
 
 
