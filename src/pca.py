@@ -59,6 +59,7 @@ PC = pca.fit_transform(x)
 # 2: blue
 # 3: green
 # 4: yellow
+fig1 = plt.figure()
 marker_size = 1.5
 cate_0 = PC[np.where(labels == 0)[0], :]
 cate_1 = PC[np.where(labels == 1)[0], :]
@@ -86,8 +87,8 @@ plt.show()
 
 
 # 3d Plot
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+fig2 = plt.figure()
+ax = fig2.add_subplot(111, projection='3d')
 mks = 0.50
 plt.title('3D plot of PCA with all features')
 ax.scatter(cate_0[:, 0], cate_0[:, 1], cate_0[:, 2], c='k', s=mks, marker='o')

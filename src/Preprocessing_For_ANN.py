@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import RFECV
 from sklearn.preprocessing import LabelEncoder
@@ -45,11 +46,23 @@ label_encoder = LabelEncoder()
 target = label_encoder.fit_transform(target)
 
 # RFECV
+print("Running RFECV...")
 rfc = RandomForestClassifier(n_estimators=100,oob_score=True,max_features='auto',min_samples_leaf=50)
-rfecv = RFECV(estimator=rfc, step=1, cv=5,  scoring='accuracy', verbose=1)
+rfecv = RFECV(estimator=rfc, step=1, cv=5,  scoring='accuracy', verbose=0)
 rfecv.fit(X, target)
+print("RFECV completed.")
 
 print('Optimal number of features: {}'.format(rfecv.n_features_))
+
+#Plot the accuracy obtained with every number of features used
+plt.figure(figsize=(16, 9))
+plt.title('Recursive Feature Elimination with Cross-Validation', fontsize=18, fontweight='bold', pad=20)
+plt.xlabel('Number of features selected', fontsize=14, labelpad=20)
+plt.ylabel('% Correct Classification', fontsize=14, labelpad=20)
+plt.plot(range(1, len(rfecv.grid_scores_) + 1), rfecv.grid_scores_, color='#303F9F', linewidth=3)
+plt.show()
+
+
 print( 'Least Important features: ', X.columns[np.where(rfecv.support_ == False)])
 
 #Drop the least important features
@@ -57,6 +70,19 @@ print( 'Least Important features: ', X.columns[np.where(rfecv.support_ == False)
 X.drop(X.columns[np.where(rfecv.support_ == False)[0]], axis=1, inplace=True)
 x_test.drop(x_test.columns[np.where(rfecv.support_ == False)[0]], axis=1, inplace=True)
 
+#A visual representation of feature importances
+dset = pd.DataFrame()
+dset['attr'] = X.columns
+dset['importance'] = rfecv.estimator_.feature_importances_
+
+dset = dset.sort_values(by='importance', ascending=False)
+
+
+plt.figure(figsize=(16, 14))
+plt.barh(y=dset['attr'], width=dset['importance'], color='#1976D2')
+plt.title('RFECV - Feature Importances', fontsize=20, fontweight='bold', pad=20)
+plt.xlabel('Importance', fontsize=14, labelpad=20)
+plt.show()
 
 n = X.shape[1]
 x_train = X.values

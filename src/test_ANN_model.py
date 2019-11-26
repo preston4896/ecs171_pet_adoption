@@ -8,7 +8,7 @@ from talos.model.early_stopper import early_stopper
 from keras.callbacks import LambdaCallback
 from create_neural_network import create_network
 
-epochs = 1000
+epochs = 1000 #makes this smaller for faster output. Also cv can be set to less than 5 to speed up process.
 
 # Build an ANN wtih create_neural_network, which uses the best hyperparameters. This scripts prints
 # the 5-fold cross validation accuracy, testing accuracy and plot the learning curve.
