@@ -14,9 +14,10 @@ from talos.model.early_stopper import early_stopper
 from keras.callbacks import LambdaCallback
 from create_neural_network import create_network
 
-# This script runs the grid search and plot the necessary graphs. It saves the best parameter output by the grid search. If you think it is
-# a better set of hyperparameters than the ones in create_neural_network, put those as the default parameters of create_network. This script
-# does not automatically do that because users have to analyze the learning curve and then make a judgement.
+# This script runs the grid search and plot the necessary graphs. It saves the best parameter output by the grid search in a file.
+# If you think it is a better set of hyperparameters than the ones in create_neural_network, put those as the default parameters
+# of create_network, which is used by test_ANN_model. This script does not automatically do that because users have to analyze
+# the learning curve and then make a judgement.
 
 
 
