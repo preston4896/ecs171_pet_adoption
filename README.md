@@ -4,7 +4,7 @@ Group project for F19 ECS171 by: Amitpal Gill, April Vang, Brian Cirieco, Gan Qi
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. The ```src``` folder contains all source files, while ```data_management.py``` contains data analysis.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. The ```src``` folder contains all source files, while ```data_management.py``` contains data analysis. The ```training/```folder can be ignored (it was used for dev purposes).
 
 ```scr/main.py``` and ```scr/main.ipynb``` are scripts that will run the whole code pipeline for you and report useful information as well as output all graphs. Each file can be run individually, or the ```main``` script will run everything in the correct order.
 
