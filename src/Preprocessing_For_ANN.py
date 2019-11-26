@@ -21,13 +21,14 @@ df = df.drop(['Name', 'RescuerID', 'Description', 'PetID'], axis=1)
 # Shuffle, with random_state set, everyone should use the same training and testing set
 df = df.sample(frac=1, random_state=0)
 # Create Variables needed
-check_correlation(x_train)
+
 X = x_train
 target = y_train
 temp = X.values
 scaler=MinMaxScaler()
 temp = scaler.fit_transform(temp)
 X = pd.DataFrame(temp, columns=X.columns)
+check_correlation(X)
 temp = x_test.values
 temp = scaler.fit_transform(temp)
 x_test = pd.DataFrame(temp, columns=X.columns)
